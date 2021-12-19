@@ -12,12 +12,14 @@ static PyObject *crypto_sign_keypair_python(PyObject *self, PyObject *args)
 
     if (!PyArg_ParseTuple(args, "S", &seed))
         return NULL;
-    Py_DECREF(seed);
+    Py_INCREF(seed);
 
     pubkey = PyMem_Malloc(897);
     privkey = PyMem_Malloc(1281);
 
     crypto_sign_keypair(pubkey, privkey, (uint8_t *)PyBytes_AsString((PyObject*) seed));
+
+    Py_DECREF(seed);
 
     private_key = Py_BuildValue("y#", privkey, 1281);
     public_key = Py_BuildValue("y#", pubkey, 897);
