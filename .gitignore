@@ -1,0 +1,14 @@
+build/
+build/temp.linux-x86_64-3.9/keygen.o
+build/temp.linux-x86_64-3.9/module.o
+build/temp.linux-x86_64-3.9/pqclean.o
+build/temp.linux-x86_64-3.9/randombytes.o
+build/temp.linux-x86_64-3.9/rng.o
+build/temp.linux-x86_64-3.9/sha2.o
+build/temp.linux-x86_64-3.9/sign.o
+build/temp.linux-x86_64-3.9/vrfy.o
+dist/tdc_falcon-0.2-py3.9-linux-x86_64.egg
+tdc_falcon.egg-info/dependency_links.txt
+tdc_falcon.egg-info/PKG-INFO
+tdc_falcon.egg-info/SOURCES.txt
+tdc_falcon.egg-info/top_level.txt
