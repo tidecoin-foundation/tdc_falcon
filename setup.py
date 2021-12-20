@@ -25,5 +25,5 @@ setup (name = 'tdc_falcon',
        author_email = 'tidecoins@protonmail.com',
        author = 'yarsawyer',
        url = 'https://github.com/yarsawyer/tdc_falcon',
-       description = 'Bindings for Falcon-512 used by tidecoin',
+       description = 'Falcon-512 bindings for TideCoin',
        ext_modules = [tdc_falcon_module])

@@ -40,76 +40,65 @@ static PyObject *crypto_sign_signature_python(PyObject *self, PyObject *args)
     PyBytesObject *sk;
     size_t mlen;
     uint8_t *sig;
-    uint8_t *siglen;
+    size_t siglen;
     PyObject *output_sig;
-    PyObject *sig_len;
-    PyObject *rslt = PyTuple_New(1);
-//
-//     if (!PyArg_ParseTuple(args, "S|S", &sk, &m))
-//         return NULL;
-//     Py_INCREF(sk);
-//     Py_INCREF(m);
-//
-//     sig = PyMem_Malloc(690);
-//     siglen = [690]
-//
-//     crypto_sign_signature(sig, siglen, (uint8_t *)PyBytes_AsString((PyObject*) m),
-//                           (uint8_t *)PyBytes_AsString((PyObject*) mlen),
-//                           (uint8_t *)PyBytes_AsString((PyObject*) sk));
-//
-//     output_sig = Py_BuildValue("y#", sig, 1281);
-//
-//     PyMem_Free(output_sig);
-//
-//     PyTuple_SetItem(rslt,0,output_sig);
-    return rslt;
+
+    if (!PyArg_ParseTuple(args, "SS", &m, &sk))
+        return NULL;    
+    Py_INCREF(sk);
+    Py_INCREF(m);
+
+    sig = PyMem_Malloc(690);    
+
+    crypto_sign_signature(sig, &siglen, (uint8_t *)PyBytes_AsString((PyObject*) m), PyBytes_GET_SIZE(m), (uint8_t *)PyBytes_AsString((PyObject*) sk));
+    
+    Py_DECREF(m);
+    Py_DECREF(sk);
+    
+    output_sig = Py_BuildValue("y#", sig, siglen);
+
+    PyMem_Free(sig);
+
+    return output_sig;
 }
 
 static PyObject *crypto_sign_verify_python(PyObject *self, PyObject *args)
 {
-    PyBytesObject *seed;
-    uint8_t *pubkey;
-    uint8_t *privkey;
-    PyObject *private_key;
-    PyObject *public_key;
-    PyObject *rslt = PyTuple_New(2);
+    PyBytesObject *m;
+    PyBytesObject *sig;
+    PyBytesObject *pubkey;
+    int result;
+    
 
-    // if (!PyArg_ParseTuple(args, "S", &seed))
-    //     return NULL;
-    // Py_DECREF(seed);
+    if (!PyArg_ParseTuple(args, "SSS", &sig, &m, &pubkey))
+        return NULL;
+    Py_INCREF(m);
+    Py_INCREF(sig);
+    Py_INCREF(pubkey);
 
-    // pubkey = PyMem_Malloc(897);
-    // privkey = PyMem_Malloc(1281);
+    result = crypto_sign_verify((uint8_t *)PyBytes_AsString((PyObject*) sig), PyBytes_GET_SIZE(sig), (uint8_t *)PyBytes_AsString((PyObject*) m), PyBytes_GET_SIZE(m), (uint8_t *)PyBytes_AsString((PyObject*) pubkey));
+    
+    Py_DECREF(pubkey);
+    Py_DECREF(sig);
+    Py_DECREF(m);
 
-    // crypto_sign_keypair(pubkey, privkey, (uint8_t *)PyBytes_AsString((PyObject*) seed));
+    if(result<0) Py_RETURN_FALSE;
+    else Py_RETURN_TRUE;
 
-
-    // private_key = Py_BuildValue("y#", privkey, 1281);
-    // public_key = Py_BuildValue("y#", pubkey, 897);
-
-    // PyMem_Free(pubkey);
-    // PyMem_Free(privkey);
-
-    // PyTuple_SetItem(rslt,0,public_key);
-    // PyTuple_SetItem(rslt,1,private_key);
-
-    return rslt;
 }
 
 
 static PyMethodDef tdc_falconMethods[] = {
     { "generate_keypair", (PyCFunction)crypto_sign_keypair_python, METH_VARARGS, "crypto_sign_keypair_python" },
     { "sign", (PyCFunction)crypto_sign_signature_python, METH_VARARGS, "crypto_sign_signature_python" },
-//    { "verify", crypto_sign_verify_python, METH_VARARGS, "crypto_sign_verify_python" },
+    { "verify", (PyCFunction)crypto_sign_verify_python, METH_VARARGS, "crypto_sign_verify_python" },
     { NULL, NULL, 0, NULL }
 };
 
 static struct PyModuleDef tdc_falconModule = {
     PyModuleDef_HEAD_INIT,
-    "crypto_sign_keypair",
-//    "crypto_sign_signature_python",
-//    "crypto_sign_verify_python",
-    "...",
+    "tdc_falcon",
+    "Falcon-512 bindings for TideCoin",
     -1,
     tdc_falconMethods
 };
