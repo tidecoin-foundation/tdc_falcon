@@ -43,26 +43,25 @@ static PyObject *crypto_sign_signature_python(PyObject *self, PyObject *args)
     uint8_t *siglen;
     PyObject *output_sig;
     PyObject *sig_len;
-    PyObject *rslt = PyTuple_New(2);
+    PyObject *rslt = PyTuple_New(1);
 
-    // if (!PyArg_ParseTuple(args, "S", &seed))
-    //     return NULL;
-    // Py_DECREF(seed);
+     if (!PyArg_ParseTuple(args, "S|S", &sk, &m))
+         return NULL;
+     Py_INCREF(sk);
+     Py_INCREF(m);
 
-    // pubkey = PyMem_Malloc(897);
-    // privkey = PyMem_Malloc(1281);
+     sig = PyMem_Malloc(690);
+     siglen = [690]
 
-    // crypto_sign_signature(pubkey, privkey, (uint8_t *)PyBytes_AsString((PyObject*) seed));
+     crypto_sign_signature(sig, siglen, (uint8_t *)PyBytes_AsString((PyObject*) m),
+                           (uint8_t *)PyBytes_AsString((PyObject*) mlen),
+                           (uint8_t *)PyBytes_AsString((PyObject*) sk));
 
-    // private_key = Py_BuildValue("y#", privkey, 1281);
-    // public_key = Py_BuildValue("y#", pubkey, 897);
+     output_sig = Py_BuildValue("y#", sig, 1281);
 
-    // PyMem_Free(pubkey);
-    // PyMem_Free(privkey);
+     PyMem_Free(output_sig);
 
-    // PyTuple_SetItem(rslt,0,public_key);
-    // PyTuple_SetItem(rslt,1,private_key);
-
+     PyTuple_SetItem(rslt,0,output_sig);
     return rslt;
 }
 
