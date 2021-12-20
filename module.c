@@ -47,13 +47,12 @@ static PyObject *crypto_sign_signature_python(PyObject *self, PyObject *args)
 
     // if (!PyArg_ParseTuple(args, "S", &seed))
     //     return NULL;
-    // Py_INCREF(seed);
+    // Py_DECREF(seed);
 
     // pubkey = PyMem_Malloc(897);
     // privkey = PyMem_Malloc(1281);
 
     // crypto_sign_signature(pubkey, privkey, (uint8_t *)PyBytes_AsString((PyObject*) seed));
-    // Py_DECREF(seed);
 
     // private_key = Py_BuildValue("y#", privkey, 1281);
     // public_key = Py_BuildValue("y#", pubkey, 897);
@@ -100,8 +99,8 @@ static PyObject *crypto_sign_verify_python(PyObject *self, PyObject *args)
 
 
 static PyMethodDef tdc_falconMethods[] = {
-    { "generate_keypair", crypto_sign_keypair_python, METH_VARARGS, "crypto_sign_keypair_python" },
-//    { "sign", crypto_sign_signature_python, METH_VARARGS, "crypto_sign_signature_python" },
+    { "generate_keypair", (PyCFunction)crypto_sign_keypair_python, METH_VARARGS, "crypto_sign_keypair_python" },
+    { "sign", (PyCFunction)crypto_sign_signature_python, METH_VARARGS, "crypto_sign_signature_python" },
 //    { "verify", crypto_sign_verify_python, METH_VARARGS, "crypto_sign_verify_python" },
     { NULL, NULL, 0, NULL }
 };
