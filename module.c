@@ -38,7 +38,6 @@ static PyObject *crypto_sign_signature_python(PyObject *self, PyObject *args)
 {
     PyBytesObject *m;
     PyBytesObject *sk;
-    size_t mlen;
     uint8_t *sig;
     size_t siglen;
     PyObject *output_sig;
