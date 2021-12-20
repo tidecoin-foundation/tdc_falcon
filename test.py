@@ -19,24 +19,24 @@ print("==== PRIVKEY ====")
 print(priv.hex())
 
 print("==== SIGNATURE ====")
-sig=sign(b'MESSAGE',priv)
+sig=sign(priv, b'MESSAGE')
 print(sig.hex())
 
 print("==== VERIFY ====")
-print(verify(sig,b'MESSAGE',pub))
+print(verify(pub,b'MESSAGE',sig))
 print("==== VERIFY BAD MESSAGE ====")
-print(verify(sig,b'BADMESSAGE',pub))
+print(verify(pub,b'BADMESSAGE',sig))
 
 passwd1 = "Master Key 2".encode("utf8")
 
 key1 = hashlib.pbkdf2_hmac('sha512', passwd1, salt, iterations=500000, dklen=48)
 pub1,priv1=generate_keypair(key1)
 
-sig1=sign(b'MESSAGE',priv1)
+sig1=sign(priv1,b'MESSAGE')
 print("==== VERIFY BAD SIG ====")
-print(verify(sig1,b'MESSAGE',pub))
+print(verify(pub,b'MESSAGE',sig1))
 
 print("==== VERIFY BAD PUB ====")
-print(verify(sig,b'MESSAGE',pub1))
+print(verify(pub1,b'MESSAGE',sig))
 
 

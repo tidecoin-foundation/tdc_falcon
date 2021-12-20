@@ -42,17 +42,19 @@ static PyObject *crypto_sign_signature_python(PyObject *self, PyObject *args)
     size_t siglen;
     PyObject *output_sig;
 
-    if (!PyArg_ParseTuple(args, "SS", &m, &sk))
+    if (!PyArg_ParseTuple(args, "SS", &sk, &m))
         return NULL;    
-    Py_INCREF(sk);
+    Py_INCREF(sk);        
     Py_INCREF(m);
+    
 
     sig = PyMem_Malloc(690);    
 
     crypto_sign_signature(sig, &siglen, (uint8_t *)PyBytes_AsString((PyObject*) m), PyBytes_GET_SIZE(m), (uint8_t *)PyBytes_AsString((PyObject*) sk));
     
-    Py_DECREF(m);
+    Py_DECREF(m);    
     Py_DECREF(sk);
+
     
     output_sig = Py_BuildValue("y#", sig, siglen);
 
@@ -69,17 +71,19 @@ static PyObject *crypto_sign_verify_python(PyObject *self, PyObject *args)
     int result;
     
 
-    if (!PyArg_ParseTuple(args, "SSS", &sig, &m, &pubkey))
+    if (!PyArg_ParseTuple(args, "SSS", &pubkey, &m, &sig))
         return NULL;
+    Py_INCREF(pubkey);
     Py_INCREF(m);
     Py_INCREF(sig);
-    Py_INCREF(pubkey);
+    
 
     result = crypto_sign_verify((uint8_t *)PyBytes_AsString((PyObject*) sig), PyBytes_GET_SIZE(sig), (uint8_t *)PyBytes_AsString((PyObject*) m), PyBytes_GET_SIZE(m), (uint8_t *)PyBytes_AsString((PyObject*) pubkey));
     
-    Py_DECREF(pubkey);
     Py_DECREF(sig);
     Py_DECREF(m);
+    Py_DECREF(pubkey);
+    
 
     if(result<0) Py_RETURN_FALSE;
     else Py_RETURN_TRUE;
