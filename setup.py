@@ -17,7 +17,6 @@ tdc_falcon_module = Extension('tdc_falcon',
                                        'aes.c',
                                        'module.c',
                                        ],
-                            extra_compile_args=['-funroll-all-loops', '-fomit-frame-pointer'],
                             include_dirs=['.'])
 
 setup (name = 'tdc_falcon',
