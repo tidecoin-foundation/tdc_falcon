@@ -1,4 +1,4 @@
-from tdc_falcon import generate_keypair, sign, verify
+from tdc_falcon import generate_keypair, sign, verify, priv_to_pub
 import os
 import binascii
 import hashlib
@@ -17,6 +17,10 @@ print(pub.hex())
 
 print("==== PRIVKEY ====")
 print(priv.hex())
+
+print("==== PRIV TO PUB ====")
+derived_pub=priv_to_pub(priv)
+print(derived_pub.hex())
 
 print("==== SIGNATURE ====")
 sig=sign(priv, b'MESSAGE')
@@ -38,5 +42,3 @@ print(verify(pub,b'MESSAGE',sig1))
 
 print("==== VERIFY BAD PUB ====")
 print(verify(pub1,b'MESSAGE',sig))
-
-

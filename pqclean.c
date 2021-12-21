@@ -105,6 +105,76 @@ crypto_sign_keypair(
     return 0;
 }
 
+int
+crypto_priv_to_pub(uint8_t *pk, uint8_t *sk)
+{
+    int8_t f[512], g[512], F[512], G[512];
+    uint16_t h[512];
+    
+    union {
+        uint8_t b[72 * 512];
+        uint64_t dummy_u64;
+        fpr dummy_fpr;
+    } tmp;
+
+    /*
+     * Decode the private key.
+     */
+
+    if (sk[0] != 0x50 + 9) {
+        return -1;
+    }
+    size_t u, v;
+
+    u = 1;
+    v = trim_i8_decode(
+            f, 9, max_fg_bits[9],
+            sk + u, CRYPTO_SECRETKEYBYTES - u);
+    if (v == 0) {
+        return -1;
+    }
+    u += v;
+    v = trim_i8_decode(
+            g, 9, max_fg_bits[9],
+            sk + u, CRYPTO_SECRETKEYBYTES - u);
+    if (v == 0) {
+        return -1;
+    }
+    u += v;
+    v = trim_i8_decode(
+            F, 9, max_FG_bits[9],
+            sk + u, CRYPTO_SECRETKEYBYTES - u);
+    if (v == 0) {
+        return -1;
+    }
+    u += v;
+    if (u != CRYPTO_SECRETKEYBYTES) {
+        return -1;
+    }
+    if (!complete_private(G, f, g, F, 9, tmp.b)) {
+        return -1;
+    }
+
+    // Compute public from private
+    if(!compute_public(h,f,g,9,tmp.b)) {
+        return -1;
+    }
+
+    
+    /*
+     * Encode public key.
+     */
+    
+    pk[0] = 0x00 + 9;
+    v = modq_encode(
+            pk + 1, CRYPTO_PUBLICKEYBYTES - 1,
+            h, 9);
+    if (v != CRYPTO_PUBLICKEYBYTES - 1) {
+        return -1;
+    }
+
+    return 0;
+}
 /*
  * Compute the signature. nonce[] receives the nonce and must have length
  * NONCELEN bytes. sigbuf[] receives the signature value (without nonce
