@@ -2,9 +2,9 @@ from tdc_falcon import generate_keypair, sign, verify, priv_to_pub
 import os
 import binascii
 import hashlib
+import time
 
-
-
+time_change = time.time()
 salt = bytes.fromhex('aaef2d3f4d77ac66e9c5a6c3d8f921d1')
 passwd = "Master Key".encode("utf8")
 
@@ -42,3 +42,6 @@ print(verify(pub,b'MESSAGE',sig1))
 
 print("==== VERIFY BAD PUB ====")
 print(verify(pub1,b'MESSAGE',sig))
+
+print(time.time()-time_change)
+
