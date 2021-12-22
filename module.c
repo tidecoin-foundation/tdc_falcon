@@ -101,7 +101,6 @@ static PyObject *crypto_sign_verify_python(PyObject *self, PyObject *args)
     Py_INCREF(m);
     Py_INCREF(sig);
     
-
     result = crypto_sign_verify((uint8_t *)PyBytes_AsString((PyObject*) sig), PyBytes_GET_SIZE(sig), (uint8_t *)PyBytes_AsString((PyObject*) m), PyBytes_GET_SIZE(m), (uint8_t *)PyBytes_AsString((PyObject*) pubkey));
     
     Py_DECREF(sig);
@@ -114,12 +113,42 @@ static PyObject *crypto_sign_verify_python(PyObject *self, PyObject *args)
 
 }
 
+static PyObject *pbkdf_hmac_512_python(PyObject *self, PyObject *args)
+{
+    PyBytesObject *passwd;
+    PyBytesObject *salt;
+    PyObject *hash_ret;
+    int iter;
+    int len;
+    uint8_t *hash;    
+
+    if (!PyArg_ParseTuple(args, "SSii", &passwd, &salt, &iter, &len))
+        return NULL;
+    Py_INCREF(passwd);
+    Py_INCREF(salt);
+
+    hash = PyMem_Malloc(len); 
+    
+    pbkdf2_hmac_sha512(hash, len, (uint8_t *)PyBytes_AsString((PyObject*) passwd), PyBytes_GET_SIZE(passwd), (uint8_t *)PyBytes_AsString((PyObject*) salt), PyBytes_GET_SIZE(salt), iter);
+
+    
+    Py_DECREF(passwd);
+    Py_DECREF(salt);
+    
+
+    hash_ret = Py_BuildValue("y#", hash, len);
+
+    PyMem_Free(hash);
+
+    return hash_ret;
+}
 
 static PyMethodDef tdc_falconMethods[] = {
     { "generate_keypair", (PyCFunction)crypto_sign_keypair_python, METH_VARARGS, "crypto_sign_keypair_python" },
     { "sign", (PyCFunction)crypto_sign_signature_python, METH_VARARGS, "crypto_sign_signature_python" },
     { "verify", (PyCFunction)crypto_sign_verify_python, METH_VARARGS, "crypto_sign_verify_python" },
     { "priv_to_pub", (PyCFunction)crypto_priv_to_pub_python, METH_VARARGS, "crypto_priv_to_pub_python" },
+    { "pbkdf2_hmac_512", (PyCFunction)pbkdf_hmac_512_python, METH_VARARGS, "pbkdf_hmac_512_python" },
     { NULL, NULL, 0, NULL }
 };
 

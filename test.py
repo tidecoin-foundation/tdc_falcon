@@ -1,4 +1,4 @@
-from tdc_falcon import generate_keypair, sign, verify, priv_to_pub
+from tdc_falcon import generate_keypair, sign, verify, priv_to_pub, pbkdf2_hmac_512
 import os
 import binascii
 import hashlib
@@ -42,6 +42,13 @@ print(verify(pub,b'MESSAGE',sig1))
 
 print("==== VERIFY BAD PUB ====")
 print(verify(pub1,b'MESSAGE',sig))
+
+time_change = time.time()
+print("===== PBKDF2-HMAC-512 =====")
+salt = binascii.unhexlify('aaef2d3f4d77ac66e9c5a6c3d8f921d1')
+passwd = "this is a test of many words to many worlds".encode("utf8")
+key = pbkdf2_hmac_512(passwd, salt, 500000, 48)
+print("Derived key:", binascii.hexlify(key))
 
 print(time.time()-time_change)
 
