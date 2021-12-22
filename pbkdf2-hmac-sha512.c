@@ -6,7 +6,11 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
+#ifdef __APPLE__
+#include <machine/endian.h>
+#else
 #include <endian.h>
+#endif
 
 #include "utils.h"
 #include "sha512.h"

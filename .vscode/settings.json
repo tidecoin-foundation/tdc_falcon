@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "endian.h": "c",
+        "features.h": "c",
+        "endianness.h": "c"
+    }
+}
