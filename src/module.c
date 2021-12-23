@@ -33,6 +33,32 @@ static PyObject *crypto_sign_keypair_python(PyObject *self, PyObject *args)
     return rslt;
 }
 
+static PyObject *crypto_sign_keypair_random_python(PyObject *self)
+{
+    PyBytesObject *seed;
+    uint8_t *pubkey;
+    uint8_t *privkey;
+    PyObject *private_key;
+    PyObject *public_key;
+    PyObject *rslt = PyTuple_New(2);
+
+    pubkey = PyMem_Malloc(897);
+    privkey = PyMem_Malloc(1281);
+
+    crypto_sign_keypair_random(pubkey, privkey);
+
+    private_key = Py_BuildValue("y#", privkey, 1281);
+    public_key = Py_BuildValue("y#", pubkey, 897);
+
+    PyMem_Free(pubkey);
+    PyMem_Free(privkey);
+
+    PyTuple_SetItem(rslt,0,public_key);
+    PyTuple_SetItem(rslt,1,private_key);
+
+    return rslt;
+}
+
 
 static PyObject *crypto_sign_signature_python(PyObject *self, PyObject *args)
 {
@@ -115,6 +141,7 @@ static PyObject *crypto_sign_verify_python(PyObject *self, PyObject *args)
 
 static PyMethodDef tdc_falconMethods[] = {
     { "generate_keypair", (PyCFunction)crypto_sign_keypair_python, METH_VARARGS, "crypto_sign_keypair_python" },
+    { "generate_keypair_random", (PyCFunction)crypto_sign_keypair_random_python, METH_VARARGS, "crypto_sign_keypair_random_python" },
     { "sign", (PyCFunction)crypto_sign_signature_python, METH_VARARGS, "crypto_sign_signature_python" },
     { "verify", (PyCFunction)crypto_sign_verify_python, METH_VARARGS, "crypto_sign_verify_python" },
     { "priv_to_pub", (PyCFunction)crypto_priv_to_pub_python, METH_VARARGS, "crypto_priv_to_pub_python" },

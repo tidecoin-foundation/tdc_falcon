@@ -1,4 +1,4 @@
-from tdc_falcon import generate_keypair, sign, verify, priv_to_pub
+from tdc_falcon import generate_keypair, sign, verify, priv_to_pub, generate_keypair_random
 import binascii
 import hashlib
 import time
@@ -42,5 +42,13 @@ print(verify(pub,b'MESSAGE',sig1))
 print("==== VERIFY BAD PUB ====")
 print(verify(pub1,b'MESSAGE',sig))
 
-print(time.time()-time_change)
+pub1,priv1=generate_keypair_random()
 
+sig1=sign(priv1,b'MESSAGE')
+print("==== VERIFY BAD SIG ====")
+print(verify(pub,b'MESSAGE',sig1))
+
+print("==== VERIFY BAD PUB ====")
+print(verify(pub1,b'MESSAGE',sig))
+
+print(time.time()-time_change)

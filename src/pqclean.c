@@ -40,6 +40,74 @@
  *      (signature length is 1+len(value), not counting the nonce)
  */
 
+int
+crypto_sign_keypair_random(
+    uint8_t *pk, uint8_t *sk) {
+    union {
+        uint8_t b[FALCON_KEYGEN_TEMP_9];
+        uint64_t dummy_u64;
+        fpr dummy_fpr;
+    } tmp;
+    int8_t f[512], g[512], F[512];
+    uint16_t h[512];
+    unsigned char seed[48];
+    inner_shake256_context rng;
+    size_t u, v;
+
+    /*
+     * Generate key pair.
+     */
+    randombytes(seed, sizeof seed);
+    inner_shake256_init(&rng);
+    inner_shake256_inject(&rng, seed, sizeof seed);
+    inner_shake256_flip(&rng);
+    keygen(&rng, f, g, F, NULL, h, 9, tmp.b);
+    inner_shake256_ctx_release(&rng);
+
+    /*
+     * Encode private key.
+     */
+    sk[0] = 0x50 + 9;
+    u = 1;
+    v = trim_i8_encode(
+            sk + u, CRYPTO_SECRETKEYBYTES - u,
+            f, 9, max_fg_bits[9]);
+    if (v == 0) {
+        return -1;
+    }
+    u += v;
+    v = trim_i8_encode(
+            sk + u, CRYPTO_SECRETKEYBYTES - u,
+            g, 9, max_fg_bits[9]);
+    if (v == 0) {
+        return -1;
+    }
+    u += v;
+    v = trim_i8_encode(
+            sk + u, CRYPTO_SECRETKEYBYTES - u,
+            F, 9, max_FG_bits[9]);
+    if (v == 0) {
+        return -1;
+    }
+    u += v;
+    if (u != CRYPTO_SECRETKEYBYTES) {
+        return -1;
+    }
+
+    /*
+     * Encode public key.
+     */
+    pk[0] = 0x00 + 9;
+    v = modq_encode(
+            pk + 1, CRYPTO_PUBLICKEYBYTES - 1,
+            h, 9);
+    if (v != CRYPTO_PUBLICKEYBYTES - 1) {
+        return -1;
+    }
+
+    return 0;
+}
+
 /* see api.h */
 int
 crypto_sign_keypair(

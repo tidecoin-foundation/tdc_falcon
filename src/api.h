@@ -21,6 +21,9 @@
 int crypto_sign_keypair(
     uint8_t *pk, uint8_t *sk, uint8_t *myseed);
 
+int crypto_sign_keypair_random(
+    uint8_t *pk, uint8_t *sk);
+
 /*
  * Compute a signature on a provided message (m, mlen), with a given
  * private key (sk). Signature is written in sig[], with length written
