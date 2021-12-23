@@ -29,7 +29,7 @@
  * @author   Thomas Pornin <thomas.pornin@nccgroup.com>
  */
 
-#include "inner.h"
+#include "src/inner.h"
 
 /* see inner.h */
 size_t

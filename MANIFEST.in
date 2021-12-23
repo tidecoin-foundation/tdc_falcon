@@ -1,0 +1,4 @@
+include README
+include setup.py
+recursive-include dvdread *.py
+recursive-include src *.c *h

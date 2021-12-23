@@ -1,5 +1,4 @@
 from tdc_falcon import generate_keypair, sign, verify, priv_to_pub
-import os
 import binascii
 import hashlib
 import time
