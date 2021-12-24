@@ -23,7 +23,7 @@ tdc_falcon_module = Extension('tdc_falcon',
                             include_dirs=['.','src'])
 
 setup (name = 'tdc_falcon',
-       version = '1.0.1',
+       version = '1.0.2',
        author_email = 'tidecoins@protonmail.com',
        author = 'yarsawyer',
        url = 'https://github.com/yarsawyer/tdc_falcon',
