@@ -5,4 +5,4 @@ https://falcon-sign.info/
 
 Tidecoin is a Post-Quantum Secure crypocurrency
 
-https://tidecoin.org
+https://tidecoin.co
